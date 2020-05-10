@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.o2o.dao.AreaDao" >
+  
+  <select id="queryArea" resultType="com.o2o.entity.Area">
+    SELECT area_id,area_name,priority,create_time,last_edit_time
+    FROM tb_area
+    ORDER BY priority DESC
+  </select>
+
+  
+  
+<!--
+  <resultMap id="BaseResultMap" type="com.o2o.entity.Area" >
+    <id column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="area_desc" property="areaDesc" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_edit_time" property="lastEditTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    area_id, area_name, area_desc, priority, create_time, last_edit_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+
+    select 
+    <include refid="Base_Column_List" />
+    from tb_area
+    where area_id = #{areaId,jdbcType=INTEGER}
+  </select>
+  <select id="queryArea" resultType="com.o2o.entity.Area">
+
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM tb_area
+    ORDER BY priority DESC
+  </select>
+-->
+
+</mapper>

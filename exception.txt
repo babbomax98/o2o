@@ -1,0 +1,6 @@
+①搜索不到数据库数据：例如现有的商铺、商品列表等
+②service层测试都会出现NullPointerException空指针异常--已解决
+③ProductDao的insert代码有错，但是不会改
+④商品编辑和添加功能的sql代码有错（productdao）,controlle访问也出错
+⑤商品列表展示的sql代码有错（productdao）
+⑥headLineDao的sql代码出错（queryHeadLine）

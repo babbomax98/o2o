@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.o2o.dao.ProductDao" >
+    <resultMap id="productMap" type="com.o2o.entity.Product">
+        <id column="product_id" jdbcType="INTEGER" property="productId" />
+        <result column="product_category_id" jdbcType="INTEGER" property="productCategoryId" />
+        <result column="shop_id" jdbcType="INTEGER" property="shopId" />
+        <result column="product_name" jdbcType="VARCHAR" property="productName" />
+        <result column="product_desc" jdbcType="VARCHAR" property="productDesc" />
+        <result column="img_addr" jdbcType="VARCHAR" property="imgAddr" />
+        <result column="normal_price" jdbcType="VARCHAR" property="normalPrice" />
+        <result column="promotion_price" jdbcType="VARCHAR" property="promotionPrice" />
+        <result column="priority" jdbcType="INTEGER" property="priority" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="enable_status" jdbcType="INTEGER" property="enableStatus" />
+        <result column="last_edit_time" jdbcType="TIMESTAMP" property="lastEditTime" />
+    </resultMap>
+    <!--
+     *useGeneratedKeys="true":插入成功之后会返回productId
+     -->
+
+    <insert id="insertProduct" parameterType="com.o2o.entity.Product"
+            useGeneratedKeys="true" keyProperty="productId" keyColumn="product_id">
+		INSERT INTO
+		tb_product(product_name,product_desc,img_addr,
+		normal_price,promotion_price,priority,create_time,
+		last_edit_time,enable_status,point,product_category_id,
+		shop_id)
+		VALUES
+		(#{productName},#{productDesc},#{imgAddr},
+		#{normalPrice},#{promotionPrice},#{priority},#{createTime},
+		#{lastEditTime},#{enableStatus},#{point},#{productCategory.productCategoryId},
+		#{shop.shopId})
+	</insert>
+    <select id="queryProductList" resultType="com.o2o.entity.Product">
+        SELECT
+        product_id,
+        product_name,
+        product_desc,
+        img_addr,
+        normal_price,
+        promotion_price,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        product_category_id,
+        shop_id
+        FROM
+        tb_product
+        <where>
+            <if test="productCondition.shop!=null and productCondition.shop.shopId!=null" >
+                and shop_id=#{productCondition.shop.shopId}
+            </if>
+            <if test="productCondition.productCategory!=null
+                and productCondition.productCategory.productCategoryId!=null">
+                and product_category_id=#{productCondition.productCategory.productCategoryId}
+            </if>
+            <if test="productCondition.productName!=null">
+                and product_name like '%${productCondition.productName}%'
+            </if>
+            <if test="productCondition.enableStatus!=null">
+                and enable_status=#{productCondition.enableStatus}
+            </if>
+            ORDER BY
+            priority DESC
+            LIMIT #{rowIndex},#{pageSize};
+        </where>
+
+    </select>
+    <update id="updateProductCategoryToNULL" parameterType="Integer">
+        UPDATE
+        tb_product
+        SET
+        product_category_id=null
+        WHERE
+        product_category_id=#{productCategoryId}
+    </update>
+    <select id="queryProductCount" resultType="int">
+        SELECT
+        count(1)
+        FROM
+        tb_product
+        <where>
+            <if test="productCondition.shop!=null and productCondition.shop.shopId!=null" >
+                and shop_id=#{productCondition.shop.shopId}
+            </if>
+            <if test="productCondition.productCategory!=null
+                and productCondition.productCategory.productCategoryId!=null">
+                and product_category_id=#{productCondition.productCategory.productCategoryId}
+            </if>
+            <if test="productCondition.productName!=null">
+                and product_name like '%${productCondition.productName}%'
+            </if>
+            <if test="productCondition.enableStatus!=null">
+                and enable_status=#{productCondition.enableStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryProductByProductId" resultMap="productMap" parameterType="java.lang.Integer">
+    SELECT
+    p.product_id,p.product_name,p.product_desc,p.img_addr,p.nomal_price,
+    p.promotion_price,p.priority, p.create_time,p.last_edit_status,
+    p.product_category_id,p.shop_id,
+    pm.product_img_id,pm.img_addr AS detail_img,
+    pm.img_desc,pm.priority,
+    pm.create_time
+    FROM
+    tb_product p
+    LEFT JOIN
+    tb_product_img pm
+    ON
+    p.product_id=pm.product_id
+    WHERE
+    p.product_id=!{productId}
+    ORDER BY
+    pm.priority DESC
+    </select>
+
+    <update id="updateProduct" parameterType="com.o2o.entity.Product"
+    keyProperty="product_id" useGeneratedKeys="true">
+        UPDATE tb_product
+        <set>
+            <if test="productCategoryId != null">
+                product_category_id = #{productCategor.productCategoryId},
+            </if>
+
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="productDesc != null">
+                product_desc = #{productDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="imgAddr != null">
+                img_addr = #{imgAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="normalPrice != null">
+                normal_price = #{normalPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionPrice != null">
+                promotion_price = #{promotionPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                priority = #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="enableStatus != null">
+                enable_status = #{enableStatus,jdbcType=INTEGER},
+            </if>
+            <if test="lastEditTime != null">
+                last_edit_time = #{lastEditTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where product_id = #{productId}
+        AND shop_id=#{shop.shopId}
+    </update>
+
+
+
+</mapper>
+
